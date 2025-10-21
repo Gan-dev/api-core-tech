@@ -1,9 +1,9 @@
-export abstract class BaseEntity {
+export abstract class DomainEntity {
     constructor(public readonly id: string) {
         this.validateId(id);
     }
 
-    equals(other: BaseEntity): boolean {
+    equals(other: DomainEntity): boolean {
         return this.id === other.id;
     }
 

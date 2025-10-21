@@ -1,10 +1,11 @@
-import { BaseEntity, FullName } from '../../shared/domain';
+import { DomainEntity, FullName } from '../../shared/domain';
 import { DomainId } from '../../shared/domain/value-objects/DomainId';
 
 export type ClientPrimitiveData = {
     id: string;
     name: string;
     lastName: string;
+
 }
 
 export type ClientDomainModel = {
@@ -12,10 +13,11 @@ export type ClientDomainModel = {
     fullName: FullName;
 }
 
-export class Client extends BaseEntity {
+export class Client extends DomainEntity {
     constructor(
         id: DomainId,
         private readonly fullName: FullName,
+
     ) {
         super(id.getValue());
     }
