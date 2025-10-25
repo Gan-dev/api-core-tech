@@ -1,4 +1,8 @@
-// Value Objects
-export * from './FullName';
-export * from './DomainId';
-export * from './DomainObject'
+// Primitive Value Objects Base
+export * from './primitives'
+
+// Enums
+export * from './enums'
+
+//Composite Value Objects
+export * from './composite'

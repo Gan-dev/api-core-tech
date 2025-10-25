@@ -1,5 +1,4 @@
-import { DomainEntity, FullName } from '../../shared/domain';
-import { DomainId } from '../../shared/domain/value-objects/DomainId';
+import { DomainEntity, DomainId, FullName } from '../../shared/domain';
 
 export type ClientPrimitiveData = {
     id: string;
