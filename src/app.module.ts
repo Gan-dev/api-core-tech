@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ClientsModule } from './clients';
 import { AppController } from './app.controller';
@@ -11,7 +11,7 @@ import { BrandsModule } from './brands/brands.module';
 import { ServicesModule } from './services/services.module';
 import { ReportsModule } from './reports/reports.module';
 import { NotesModule } from './notes/notes.module';
-import { ReportsModule } from './reports/reports.module';
+import { TenancyModule, TenantMiddleware } from './tenancy';
 import { appConfig, databaseConfig, jwtConfig, validationSchema } from './config';
 
 const modules = [
@@ -28,6 +28,7 @@ const modules = [
     cache: true, // Cachea los valores para mejor rendimiento
   }),
   DatabaseModule,
+  TenancyModule, // Módulo global de multi-tenancy
   ClientsModule,
   SharedModule,
   StaffModule,
@@ -36,7 +37,6 @@ const modules = [
   ServicesModule,
   ReportsModule,
   NotesModule,
-  ReportsModule,
 ];
 
 @Module({
@@ -44,4 +44,12 @@ const modules = [
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    // Aplicar middleware de tenant a todas las rutas excepto las de gestión de tenants
+    consumer
+      .apply(TenantMiddleware)
+      .exclude('tenancy/*path', 'health', 'docs')
+      .forRoutes('*');
+  }
+}

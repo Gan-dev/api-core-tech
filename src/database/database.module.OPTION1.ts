@@ -2,22 +2,31 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DatabaseConfig } from '../config/config.interface';
+
+// Importar TODAS las entidades
 import { Company } from '../tenancy/entities';
+import { Client } from '../clients/entities/client.entity';
+import { Staff } from '../staff/entities/staff.entity';
+import { Brand } from '../brands/entities/brand.entity';
+import { Device } from '../devices/entities/device.entity';
+import { Note } from '../notes/entities/note.entity';
+import { RepairOrder } from '../reports/entities/repair-order.entity';
 
 /**
- * DatabaseModule - Configuración de conexión a PostgreSQL con soporte multi-tenant
- * Conexión 'default': Schema público para tablas compartidas (companies, etc)
- * Los schemas de tenant se acceden dinámicamente según el contexto
+ * DatabaseModule - Configuración de conexión a PostgreSQL
+ * 
+ * MODO DESARROLLO: Sincroniza todas las entidades en schema público
+ * MODO PRODUCCIÓN: Solo entidades globales (Company) + schemas dinámicos por tenant
  */
 @Module({
     imports: [
-        // Conexión principal al schema público
         TypeOrmModule.forRootAsync({
             name: 'default',
             imports: [ConfigModule],
             inject: [ConfigService],
             useFactory: (configService: ConfigService) => {
                 const dbConfig = configService.get<DatabaseConfig>('database')!;
+                const isDevelopment = configService.get('app.isDevelopment');
 
                 return {
                     type: 'postgres',
@@ -26,16 +35,21 @@ import { Company } from '../tenancy/entities';
                     username: dbConfig.username,
                     password: dbConfig.password,
                     database: dbConfig.database,
-                    schema: 'public', // Schema público para datos globales
-                    entities: [Company], // Solo entidades globales aquí
-                    synchronize: dbConfig.synchronize, // ⚠️ Usar false en producción
+                    schema: 'public',
+
+                    // En desarrollo: todas las entidades para testing
+                    // En producción: solo Company (las demás van en schemas de tenant)
+                    entities: isDevelopment
+                        ? [Company, Client, Staff, Brand, Device, Note, RepairOrder]
+                        : [Company],
+
+                    synchronize: dbConfig.synchronize,
                     logging: dbConfig.logging,
                     autoLoadEntities: false,
                     keepConnectionAlive: dbConfig.keepConnectionAlive,
                     extra: {
                         ...dbConfig.extra,
-                        // Configuración para mejor manejo de schemas
-                        max: 20, // Pool de conexiones
+                        max: 20,
                         idleTimeoutMillis: 30000,
                     },
                 };
