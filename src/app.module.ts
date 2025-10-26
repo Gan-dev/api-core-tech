@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { ClientsModule } from './clients';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -10,9 +11,23 @@ import { BrandsModule } from './brands/brands.module';
 import { ServicesModule } from './services/services.module';
 import { ReportsModule } from './reports/reports.module';
 import { NotesModule } from './notes/notes.module';
+import { ReportsModule } from './reports/reports.module';
+import { appConfig, databaseConfig, jwtConfig, validationSchema } from './config';
 
 const modules = [
-  //DatabaseModule,
+  // Configuración global
+  ConfigModule.forRoot({
+    isGlobal: true, // Hace que ConfigService esté disponible en toda la aplicación
+    envFilePath: ['.env.local', '.env'], // Orden de prioridad de archivos .env
+    load: [appConfig, databaseConfig, jwtConfig], // Carga las configuraciones modulares
+    validationSchema, // Valida las variables de entorno al iniciar
+    validationOptions: {
+      allowUnknown: true, // Permite variables no definidas en el schema
+      abortEarly: false, // Muestra todos los errores de validación, no solo el primero
+    },
+    cache: true, // Cachea los valores para mejor rendimiento
+  }),
+  DatabaseModule,
   ClientsModule,
   SharedModule,
   StaffModule,
@@ -21,6 +36,7 @@ const modules = [
   ServicesModule,
   ReportsModule,
   NotesModule,
+  ReportsModule,
 ];
 
 @Module({
