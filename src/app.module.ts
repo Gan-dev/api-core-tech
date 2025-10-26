@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
+import { ClientsModule } from './clients';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
-import { ClientsModule } from './clients/clients.module';
 import { SharedModule } from './shared/shared.module';
 import { StaffModule } from './staff/staff.module';
 import { DevicesModule } from './devices/devices.module';

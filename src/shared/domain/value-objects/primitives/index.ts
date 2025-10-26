@@ -1,3 +1,2 @@
-// Primitives
-export * from './domain-object';
+// Primitive Value Objects
 export * from './domain-id.vo';
