@@ -12,7 +12,7 @@ import { ReportsModule } from './reports/reports.module';
 import { NotesModule } from './notes/notes.module';
 
 const modules = [
-  DatabaseModule,
+  //DatabaseModule,
   ClientsModule,
   SharedModule,
   StaffModule,

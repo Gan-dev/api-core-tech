@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto';
-import { DomainObject } from './DomainObject';
+import { DomainObject } from '../../base';
 
 export class DomainId extends DomainObject {
     private readonly id: string;
